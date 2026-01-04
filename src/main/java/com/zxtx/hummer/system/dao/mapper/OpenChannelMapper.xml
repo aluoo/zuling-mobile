@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.system.dao.mapper.OpenChannelMapper">
+    <resultMap id="BaseResultMap" type="com.zxtx.hummer.system.domain.OpenChannel">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="operator_id" jdbcType="VARCHAR" property="operatorId"/>
+        <result column="operator_name" jdbcType="VARCHAR" property="operatorName"/>
+        <result column="emp_id" jdbcType="BIGINT" property="empId"/>
+        <result column="md5_key" jdbcType="VARCHAR" property="md5Key"/>
+        <result column="aes_key" jdbcType="VARCHAR" property="aesKey"/>
+        <result column="related_app_id" jdbcType="VARCHAR" property="relatedAppId"/>
+        <result column="related_location" jdbcType="VARCHAR" property="relatedLocation"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        id
+        , operator_id, operator_name, emp_id, md5_key, aes_key, related_app_id, related_location,
+    create_time
+    </sql>
+    <select id="selectByExample" parameterType="com.zxtx.hummer.system.domain.OpenChannelExample"
+            resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from open_channel
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from open_channel
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from open_channel
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.zxtx.hummer.system.domain.OpenChannelExample">
+        delete from open_channel
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.zxtx.hummer.system.domain.OpenChannel">
+        insert into open_channel (id, operator_id, operator_name,
+                                  emp_id, md5_key, aes_key,
+                                  related_app_id, related_location, create_time)
+        values (#{id,jdbcType=BIGINT}, #{operatorId,jdbcType=VARCHAR}, #{operatorName,jdbcType=VARCHAR},
+                #{empId,jdbcType=BIGINT}, #{md5Key,jdbcType=VARCHAR}, #{aesKey,jdbcType=VARCHAR},
+                #{relatedAppId,jdbcType=VARCHAR}, #{relatedLocation,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="com.zxtx.hummer.system.domain.OpenChannel">
+        insert into open_channel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="operatorId != null">
+                operator_id,
+            </if>
+            <if test="operatorName != null">
+                operator_name,
+            </if>
+            <if test="empId != null">
+                emp_id,
+            </if>
+            <if test="md5Key != null">
+                md5_key,
+            </if>
+            <if test="aesKey != null">
+                aes_key,
+            </if>
+            <if test="relatedAppId != null">
+                related_app_id,
+            </if>
+            <if test="relatedLocation != null">
+                related_location,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="operatorId != null">
+                #{operatorId,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorName != null">
+                #{operatorName,jdbcType=VARCHAR},
+            </if>
+            <if test="empId != null">
+                #{empId,jdbcType=BIGINT},
+            </if>
+            <if test="md5Key != null">
+                #{md5Key,jdbcType=VARCHAR},
+            </if>
+            <if test="aesKey != null">
+                #{aesKey,jdbcType=VARCHAR},
+            </if>
+            <if test="relatedAppId != null">
+                #{relatedAppId,jdbcType=VARCHAR},
+            </if>
+            <if test="relatedLocation != null">
+                #{relatedLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.zxtx.hummer.system.domain.OpenChannelExample"
+            resultType="java.lang.Long">
+        select count(*) from open_channel
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update open_channel
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.operatorId != null">
+                operator_id = #{record.operatorId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.operatorName != null">
+                operator_name = #{record.operatorName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.empId != null">
+                emp_id = #{record.empId,jdbcType=BIGINT},
+            </if>
+            <if test="record.md5Key != null">
+                md5_key = #{record.md5Key,jdbcType=VARCHAR},
+            </if>
+            <if test="record.aesKey != null">
+                aes_key = #{record.aesKey,jdbcType=VARCHAR},
+            </if>
+            <if test="record.relatedAppId != null">
+                related_app_id = #{record.relatedAppId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.relatedLocation != null">
+                related_location = #{record.relatedLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update open_channel
+        set id = #{record.id,jdbcType=BIGINT},
+        operator_id = #{record.operatorId,jdbcType=VARCHAR},
+        operator_name = #{record.operatorName,jdbcType=VARCHAR},
+        emp_id = #{record.empId,jdbcType=BIGINT},
+        md5_key = #{record.md5Key,jdbcType=VARCHAR},
+        aes_key = #{record.aesKey,jdbcType=VARCHAR},
+        related_app_id = #{record.relatedAppId,jdbcType=VARCHAR},
+        related_location = #{record.relatedLocation,jdbcType=VARCHAR},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.zxtx.hummer.system.domain.OpenChannel">
+        update open_channel
+        <set>
+            <if test="operatorId != null">
+                operator_id = #{operatorId,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorName != null">
+                operator_name = #{operatorName,jdbcType=VARCHAR},
+            </if>
+            <if test="empId != null">
+                emp_id = #{empId,jdbcType=BIGINT},
+            </if>
+            <if test="md5Key != null">
+                md5_key = #{md5Key,jdbcType=VARCHAR},
+            </if>
+            <if test="aesKey != null">
+                aes_key = #{aesKey,jdbcType=VARCHAR},
+            </if>
+            <if test="relatedAppId != null">
+                related_app_id = #{relatedAppId,jdbcType=VARCHAR},
+            </if>
+            <if test="relatedLocation != null">
+                related_location = #{relatedLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.zxtx.hummer.system.domain.OpenChannel">
+        update open_channel
+        set operator_id      = #{operatorId,jdbcType=VARCHAR},
+            operator_name    = #{operatorName,jdbcType=VARCHAR},
+            emp_id           = #{empId,jdbcType=BIGINT},
+            md5_key          = #{md5Key,jdbcType=VARCHAR},
+            aes_key          = #{aesKey,jdbcType=VARCHAR},
+            related_app_id   = #{relatedAppId,jdbcType=VARCHAR},
+            related_location = #{relatedLocation,jdbcType=VARCHAR},
+            create_time      = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectByExampleWithRowbounds" parameterType="com.zxtx.hummer.system.domain.OpenChannelExample"
+            resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from open_channel
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+</mapper>

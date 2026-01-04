@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.commission.dao.mapper.CommissionSettleCheckMapper">
+
+    <select id="selectByParam" resultType="com.zxtx.hummer.commission.dto.CommissionSettleCheckVO">
+        SELECT
+        a.id,
+        a.correlation_id,
+        a.commission_package as commissionType,
+        a.settle_time,
+        a.settle_balance,
+        a.pay_amount,
+        a.all_amount,
+        b.name as regionName,
+        c.name as bdName,
+        c.mobile_number,
+        d.create_time as createTimeOne,
+        e.create_time as createTimeTWo,
+        f.create_time as createTimeTHree
+        from commission_settle_check a
+        left join employee b on a.region_id = b.id and b.company_type=1
+        left join employee c on a.bd_id = c.id
+        left join mb_order d on a.correlation_id=d.id
+        left join mb_exchange_order e on a.correlation_id = e.id
+        left join di_insurance_order f on a.correlation_id = f.id
+        <where>
+            1=1
+            <if test="startTime != null">and a.settle_time<![CDATA[>= ]]>#{startTime}</if>
+            <if test="endTime != null">and a.settle_time<![CDATA[<= ]]>#{endTime}</if>
+            <if test="commissionType != null">
+                and a.commission_package = #{commissionType}
+            </if>
+            <if test="regionName != null and regionName != '' ">
+                and b.name LIKE concat(#{regionName}, '%')
+            </if>
+            <if test="correlationId != null and correlationId != '' ">
+                and a.correlation_id LIKE concat(#{correlationId}, '%')
+            </if>
+            <if test="bdName != null and bdName != '' ">
+                and c.name LIKE concat(#{bdName}, '%')
+            </if>
+            <if test="mobileNumber != null and mobileNumber != '' ">
+                and c.mobile_number = #{mobileNumber}
+            </if>
+        </where>
+        order by a.settle_time desc
+    </select>
+
+    <select id="SumByParam" resultType="com.zxtx.hummer.commission.dto.CommissionSettleCheckSumVO">
+        SELECT
+        SUM(IF(a.commission_type = 4 , a.settle_balance, 0)) insuranceTotal,
+        SUM(IF(a.commission_type = 1 , a.settle_balance, 0)) mobileTotal,
+        SUM(IF(a.commission_type = 2 , a.settle_balance, 0)) appTotal
+        from commission_settle_check a
+        left join employee b on a.region_id = b.id and b.company_type=1
+        left join employee c on a.bd_id = c.id
+        <where>
+            1=1
+            <if test="startTime != null">and a.settle_time<![CDATA[>= ]]>#{startTime}</if>
+            <if test="endTime != null">and a.settle_time<![CDATA[<= ]]>#{endTime}</if>
+            <if test="commissionType != null">
+                and a.commission_package = #{commissionType}
+            </if>
+            <if test="correlationId != null and correlationId != '' ">
+                and a.correlation_id LIKE concat(#{correlationId}, '%')
+            </if>
+            <if test="regionName != null and regionName != '' ">
+                and b.name LIKE concat(#{regionName}, '%')
+            </if>
+            <if test="bdName != null and bdName != '' ">
+                and c.name LIKE concat(#{bdName}, '%')
+            </if>
+            <if test="mobileNumber != null and mobileNumber != '' ">
+                and c.mobile_number = #{mobileNumber}
+            </if>
+        </where>
+        order by a.settle_time desc
+    </select>
+
+    <select id="fixByParam" resultType="com.zxtx.hummer.commission.dto.CommissionSettleCheckVO">
+        SELECT
+        a.id,
+        a.region_id,
+        a.correlation_id
+        FROM
+        commission_settle_check a
+        LEFT JOIN employee b ON a.region_id = b.id
+        WHERE
+        b.company_type !=1 and a.bd_id=#{bdId}
+    </select>
+
+
+</mapper>

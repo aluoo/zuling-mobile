@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.order.dao.mapper.MbOrderQuotePriceLogMapper">
+
+    <select id="quoteCountGroupByEmployee" resultType="com.zxtx.hummer.mobileStat.domain.RecycleDataDailyBase">
+        SELECT employee_id                      as employeeId,
+               count(1)                         as quotePriceNum,
+               ifnull(sum(quote_time_spent), 0) as quoteTimeSpent
+        FROM mb_order_quote_price_log
+        WHERE quoted =1 and quote_time between #{beginTime} and #{endTime}
+        GROUP BY employee_id
+    </select>
+
+</mapper>

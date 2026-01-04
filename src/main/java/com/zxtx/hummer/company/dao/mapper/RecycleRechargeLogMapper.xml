@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.company.dao.mapper.RecycleRechargeLogMapper">
+
+    <select id="selectByParam" resultType="com.zxtx.hummer.company.vo.RecycleRechargeVo">
+        SELECT a.*, d.name as companyName
+        from recycle_recharge_log a
+        left join company d on a.company_id = d.id
+        <where>
+            1=1
+            <if test="req.startTime != null">and a.create_time<![CDATA[>= ]]>#{req.startTime}</if>
+            <if test="req.endTime != null">and a.create_time<![CDATA[<= ]]>#{req.endTime}</if>
+            <if test="req.companyName != null and req.companyName != '' ">
+                and d.name LIKE concat(#{req.companyName}, '%')
+            </if>
+            <if test="req.status != null">
+                and a.status = #{req.status}
+            </if>
+        </where>
+        order by a.create_time desc
+    </select>
+
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.exchange.dao.mapper.MbExchangeInstallMapper">
+
+    <select id="selectByParam" resultType="com.zxtx.hummer.exchange.vo.ExchangeInstallVO">
+        SELECT
+        *
+        FROM mb_install
+        <where>
+            1=1
+            <if test="req.name != null and req.name != '' ">
+                and name LIKE concat(#{req.name}, '%')
+            </if>
+            <if test="req.channelNo != null and req.channelNo != '' ">
+                and channel_no LIKE concat(#{req.channelNo}, '%')
+            </if>
+            <if test="req.channelToken != null and req.channelToken != '' ">
+                and channel_token LIKE concat(#{req.channelToken}, '%')
+            </if>
+            <if test="req.status != null">
+                and status = #{req.status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+</mapper>

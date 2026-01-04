@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.insurance.dao.mapper.DiPackageMapper">
+
+    <select id="selectByParam" resultType="com.zxtx.hummer.insurance.vo.DiPackageVO">
+        SELECT
+        a.id,
+        a.name,
+        b.name as typeName,
+        a.status,
+        a.create_time,
+        a.update_time
+        FROM di_package a
+        left join di_type b on a.type_id = b.id
+        <where>
+            1=1
+            <if test="name != null and name != '' ">
+                and a.name LIKE concat(#{name}, '%')
+            </if>
+            <if test="status != null">
+                and a.status = #{status}
+            </if>
+        </where>
+        order by a.create_time desc
+    </select>
+
+</mapper>

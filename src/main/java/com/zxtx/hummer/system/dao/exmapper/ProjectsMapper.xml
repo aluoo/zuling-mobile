@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zxtx.hummer.system.dao.exmapper.ProjectsMapper">
+
+    <select id="get" resultType="com.zxtx.hummer.system.domain.ProjectsDO">
+        select `project_id`,
+               `project_code`,
+               `project_name`,
+               `device`,
+               `build_code`,
+               `version_code`,
+               `online_time`,
+               `status`,
+               `download_url`,
+               `readme`,
+               `forced_updating`,
+               `creat_time`,
+               `creator`
+        from sys_projects
+        where project_id = #{value}
+    </select>
+
+    <select id="list" resultType="com.zxtx.hummer.system.domain.ProjectsDO">
+        select
+        `project_id`,`project_code`,`project_name`,`device`,`build_code`,`version_code`,`online_time`,`status`,`download_url`,`readme`,`forced_updating`,`creat_time`,`creator`
+        from sys_projects
+        <where>
+            <if test="projectId != null and projectId != ''">and project_id = #{projectId}</if>
+            <if test="projectCode != null and projectCode != ''">and project_code = #{projectCode}</if>
+            <if test="projectName != null and projectName != ''">and project_name = #{projectName}</if>
+            <if test="device != null and device != ''">and device = #{device}</if>
+            <if test="buildCode != null and buildCode != ''">and build_code = #{buildCode}</if>
+            <if test="versionCode != null and versionCode != ''">and version_code = #{versionCode}</if>
+            <if test="onlineTime != null and onlineTime != ''">and online_time = #{onlineTime}</if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+            <if test="downloadUrl != null and downloadUrl != ''">and download_url = #{downloadUrl}</if>
+            <if test="readme != null and readme != ''">and readme = #{readme}</if>
+            <if test="forcedUpdating != null and forcedUpdating != ''">and forced_updating = #{forcedUpdating}</if>
+            <if test="creatTime != null and creatTime != ''">and creat_time = #{creatTime}</if>
+            <if test="creator != null and creator != ''">and creator = #{creator}</if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by project_code desc
+            </otherwise>
+        </choose>
+
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from sys_projects
+        <where>
+            <if test="projectId != null and projectId != ''">and project_id = #{projectId}</if>
+            <if test="projectCode != null and projectCode != ''">and project_code = #{projectCode}</if>
+            <if test="projectName != null and projectName != ''">and project_name = #{projectName}</if>
+            <if test="device != null and device != ''">and device = #{device}</if>
+            <if test="buildCode != null and buildCode != ''">and build_code = #{buildCode}</if>
+            <if test="versionCode != null and versionCode != ''">and version_code = #{versionCode}</if>
+            <if test="onlineTime != null and onlineTime != ''">and online_time = #{onlineTime}</if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+            <if test="downloadUrl != null and downloadUrl != ''">and download_url = #{downloadUrl}</if>
+            <if test="readme != null and readme != ''">and readme = #{readme}</if>
+            <if test="forcedUpdating != null and forcedUpdating != ''">and forced_updating = #{forcedUpdating}</if>
+            <if test="creatTime != null and creatTime != ''">and creat_time = #{creatTime}</if>
+            <if test="creator != null and creator != ''">and creator = #{creator}</if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.zxtx.hummer.system.domain.ProjectsDO" useGeneratedKeys="true"
+            keyProperty="projectId">
+        insert into sys_projects
+        (`project_code`,
+         `project_name`,
+         `device`,
+         `build_code`,
+         `version_code`,
+         `online_time`,
+         `status`,
+         `download_url`,
+         `readme`,
+         `forced_updating`,
+         `creat_time`,
+         `creator`)
+        values (#{projectCode},
+                #{projectName},
+                #{device},
+                #{buildCode},
+                #{versionCode},
+                #{onlineTime},
+                #{status},
+                #{downloadUrl},
+                #{readme},
+                #{forcedUpdating},
+                #{creatTime},
+                #{creator})
+    </insert>
+
+    <update id="update" parameterType="com.zxtx.hummer.system.domain.ProjectsDO">
+        update sys_projects
+        <set>
+            <if test="projectCode != null">`project_code` = #{projectCode},</if>
+            <if test="projectName != null">`project_name` = #{projectName},</if>
+            <if test="device != null">`device` = #{device},</if>
+            <if test="buildCode != null">`build_code` = #{buildCode},</if>
+            <if test="versionCode != null">`version_code` = #{versionCode},</if>
+            <if test="onlineTime != null">`online_time` = #{onlineTime},</if>
+            <if test="status != null">`status` = #{status},</if>
+            <if test="downloadUrl != null">`download_url` = #{downloadUrl},</if>
+            <if test="readme != null">`readme` = #{readme},</if>
+            <if test="forcedUpdating != null">`forced_updating` = #{forcedUpdating},</if>
+            <if test="creatTime != null">`creat_time` = #{creatTime},</if>
+            <if test="creator != null">`creator` = #{creator}</if>
+        </set>
+        where project_id = #{projectId}
+    </update>
+
+    <delete id="remove">
+        delete
+        from sys_projects
+        where project_id = #{value}
+    </delete>
+
+    <delete id="batchRemove">
+        delete from sys_projects where project_id in
+        <foreach item="projectId" collection="array" open="(" separator="," close=")">
+            #{projectId}
+        </foreach>
+    </delete>
+    <select id="getByApp" resultType="com.zxtx.hummer.system.domain.ProjectsDO">
+        select `project_id`,
+               `project_code`,
+               `project_name`,
+               `device`,
+               `build_code`,
+               `version_code`,
+               `online_time`,
+               `status`,
+               `download_url`,
+               `readme`,
+               `forced_updating`,
+               `creat_time`,
+               `creator`
+        from sys_projects
+        where project_code = #{projectCode}
+          and device = #{device}
+          and build_code &gt;= #{buildCode}
+          and status = 2
+    </select>
+
+    <select id="getByWeb" resultType="com.zxtx.hummer.system.domain.ProjectsDO">
+        select `project_id`,
+               `project_code`,
+               `project_name`,
+               `device`,
+               `build_code`,
+               `version_code`,
+               `online_time`,
+               `status`,
+               `download_url`,
+               `readme`,
+               `forced_updating`,
+               `creat_time`,
+               `creator`
+        from sys_projects
+        where project_code = #{projectCode}
+          and device = #{device}
+          and status = 2
+    </select>
+    <!--查询正在启用的最新版  -->
+    <select id="getFirst" resultType="com.zxtx.hummer.system.domain.ProjectsDO">
+        select `project_id`,
+               `project_code`,
+               `project_name`,
+               `device`,
+               `build_code`,
+               `version_code`,
+               `online_time`,
+               `status`,
+               `download_url`,
+               `readme`,
+               `forced_updating`,
+               `creat_time`,
+               `creator`
+        from sys_projects
+        where project_code = #{projectCode}
+          and status = 2
+    </select>
+    <!--查询buildcode之间的list  -->
+    <select id="getList" resultType="com.zxtx.hummer.system.domain.ProjectsDO">
+        select `project_id`,
+               `project_code`,
+               `project_name`,
+               `device`,
+               `build_code`,
+               `version_code`,
+               `online_time`,
+               `status`,
+               `download_url`,
+               `readme`,
+               `forced_updating`,
+               `creat_time`,
+               `creator`
+        from sys_projects
+        where project_code = #{projectCode}
+          AND build_code &gt; #{buildCodeMin}
+          and build_code &lt;= #{buildCodeMax}
+    </select>
+
+    <select id="getByProjectCode" resultType="com.zxtx.hummer.system.domain.ProjectsDO">
+        select `project_id`,
+               `project_code`,
+               `project_name`,
+               `device`,
+               `build_code`,
+               `version_code`,
+               `online_time`,
+               `status`,
+               `download_url`,
+               `readme`,
+               `forced_updating`,
+               `creat_time`,
+               `creator`
+        from sys_projects
+        where project_code = #{projectCode}
+          and build_code = 0
+    </select>
+
+    <select id="listofson" resultType="com.zxtx.hummer.system.domain.ProjectsDO">
+        select
+        `project_id`,`project_code`,`project_name`,`device`,`build_code`,`version_code`,`online_time`,`status`,`download_url`,`readme`,`forced_updating`,`creat_time`,`creator`
+        from sys_projects
+        where project_code = #{projectCode} and build_code not in (0)
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by build_code desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="countofson" resultType="int">
+        select count(*)
+        from sys_projects
+        where project_code = #{projectCode}
+          and build_code not in (0)
+    </select>
+
+</mapper>

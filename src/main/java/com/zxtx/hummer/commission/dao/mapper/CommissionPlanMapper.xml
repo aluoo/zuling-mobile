@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.commission.dao.mapper.CommissionPlanMapper">
+
+
+    <select id="getEmployeeCommissionPlanInfo"
+            resultType="com.zxtx.hummer.commission.dto.EmployeeCommissionPlanInfoDTO">
+        SELECT b.name    as planName,
+               a.plan_id as planId,
+               e.name    as packageInfoName,
+               c.name    as bizTypeStr,
+               d.super_divide as superDivideLong,
+               d.self_divide as selfDivideLong,
+               d.child_divide as childDivideLong,
+               d.super_scale,
+               d.self_scale,
+               d.child_scale
+        FROM commission_plan_members a
+                 LEFT JOIN commission_plan b ON a.plan_id = b.id
+                 LEFT JOIN commission_type c on a.type_id = c.id
+                 LEFT JOIN commission_plan_conf d on a.plan_id = d.plan_id
+                 LEFT JOIN commission_type_package e on d.type_package_id = e.id
+        where a.child_employee_id = #{employeeId}
+    </select>
+
+
+</mapper>

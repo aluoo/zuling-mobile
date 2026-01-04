@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.exchange.dao.mapper.MbExchangeEmployeeMapper">
+
+    <select id="selectByParam" resultType="com.zxtx.hummer.exchange.vo.ExchangeEmployeeInfoVO">
+        SELECT
+        a.id as employeeId,
+        a.ancestors as ancestors,
+        a.name as employeeName,
+        c.address as address,
+        a.mobile_number as employeePhone,
+        b.able_balance as ableBalance,
+        a.status as status,
+        a.level as level,
+        c.business as business
+        FROM employee a
+        LEFT JOIN employee_account b on a.id = b.employee_id
+        LEFT JOIN mb_exchange_employee_info c on a.id = c.employee_id
+        <where>
+            a.company_type=1
+            <if test="req.employeeName != null and req.employeeName != '' ">
+                and a.name LIKE concat(#{req.employeeName}, '%')
+            </if>
+            <if test="req.employeePhone != null and req.employeePhone != '' ">
+                and a.mobile_number = #{req.employeePhone}
+            </if>
+            <if test="req.bdAncestor != null and req.bdAncestor != '' ">
+                AND (a.ancestors = #{req.bdAncestor} OR a.ancestors LIKE concat(#{req.bdAncestor},'%'))
+            </if>
+            <if test="req.status != null">
+                and a.status = #{req.status}
+            </if>
+            <if test="req.level != null">
+                and a.level = #{req.level}
+            </if>
+        </where>
+        order by a.create_time desc
+    </select>
+
+    <select id="getByAncestor" resultType="com.zxtx.hummer.exchange.vo.AgencyCalVO">
+        select count(if(company_type = '1', true, null))                              as staffNum,
+               count(if(company_type in (2,3) and dept_type = 1 and type = 1, true, null)) as companyNum
+        from employee
+        where `status` = 1
+          and ancestors like concat(#{ancestors}, ',%')
+    </select>
+
+</mapper>

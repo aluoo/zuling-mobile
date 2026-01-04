@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.company.dao.mapper.ExtCompanyMapper">
+
+    <select id="listByCondition" resultType="com.zxtx.hummer.company.vo.ComListRes">
+        SELECT c.id, c.name, c.contact, c.contact_mobile, c.status, c.province,c.city,c.region,c.address,c.employee_id,
+               c.type,c.exchange_type,c.front_url,c.bus_license,c.id_url_up,c.id_url_down,c.create_time,
+               c.province_code, c.city_code, c.region_code
+        from company c
+        LEFT JOIN employee e on c.employee_id=e.id
+        <where>
+            c.id != 100000000000000000
+            <if test="deptCodes !=null and deptCodes !=''">
+                and e.dept_code like '${deptCodes}%'
+            </if>
+            <if test="mobileNumber != null and mobileNumber !=''">
+                AND c.contact_mobile = #{mobileNumber}
+            </if>
+            <if test="companyName != null and companyName !=''">
+                AND c.name LIKE '%${companyName}%'
+            </if>
+            <if test="status != null">
+                AND c.status = #{status}
+            </if>
+            <if test="type != null">
+                AND c.type = #{type}
+            </if>
+            <if test="type == null">
+                AND c.type !=4
+            </if>
+            <if test="startTime != null">and c.create_time<![CDATA[>= ]]>#{startTime}</if>
+            <if test="endTime != null">and c.create_time<![CDATA[<= ]]>#{endTime}</if>
+        </where>
+        ORDER BY c.status, c.create_time desc
+    </select>
+
+    <update id="updatePayAmountById">
+        update company
+        set pay_amount  = #{payAmount,jdbcType=INTEGER},
+            updator     = #{updator,jdbcType=VARCHAR},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="changeChannelStatus">
+        UPDATE company
+        SET status      = #{company.status},
+            update_time = #{company.updateTime},
+            updator     = #{company.updator}
+        where status = #{oldStatus}
+          AND (code = #{code} OR code LIKE concat(#{code}, '-%'))
+    </update>
+
+    <select id="selectMaxCode" resultType="java.lang.Integer">
+        SELECT MAX(d.num)
+        FROM (SELECT CONVERT(SUBSTRING_INDEX(code, "-", -1), SIGNED) num FROM company WHERE p_id = #{pId}) d
+    </select>
+</mapper>

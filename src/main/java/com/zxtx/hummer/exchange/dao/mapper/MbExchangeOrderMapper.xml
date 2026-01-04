@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.exchange.dao.mapper.MbExchangeOrderMapper">
+
+    <select id="selectByParam" resultType="com.zxtx.hummer.exchange.vo.ExchangeOrderVO">
+        SELECT
+        a.id as id,
+        f.name as storeName,
+        b.name as storeEmployee,
+        b.mobile_number as storeMobile,
+        a.custom_phone as customPhone,
+        a.type as type,
+        a.source as source,
+        e.name as agentName,
+        d.name as areaName,
+        c.name as bdName,
+        a.sys_mobile as sysMobile,
+        a.imei_no as imeiNo,
+        a.oaid as oaid,
+        a.exchange_phone_no as exchangePhoneNo,
+        a.create_time as createTime,
+        a.trial_time as trialTime,
+        a.status as status,
+        a.sys_status as sysStatus,
+        a.sys_remark as sysRemark,
+        a.illegal,
+        a.plat_check,
+        a.remark as remark,
+        a.settle_status as settleStatus,
+        a.store_company_id as storeCompanyId,
+        f.type as storeCompanyType,
+        f.p_id as storeCompanyPId,
+        a.pass_remark as passRemark,
+        a.update_by
+        FROM
+        mb_exchange_order a
+        left join employee b on a.store_employee_id=b.id
+        left join employee c on a.bd_id = c.id
+        LEFT JOIN employee d on a.area_id = d.id
+        LEFT JOIN employee e on a.agent_id = e.id
+        LEFT JOIN company f on a.store_company_id = f.id
+        <where>
+            a.bd_id is not null
+            <if test="req.agentName != null and req.agentName != '' ">
+                and e.name LIKE concat(#{req.agentName}, '%')
+            </if>
+            <if test="req.companyName != null and req.companyName != '' ">
+                and f.name LIKE concat(#{req.companyName}, '%')
+            </if>
+            <if test="req.companyMobile != null and req.companyMobile != '' ">
+                and f.contact_mobile = #{req.companyMobile}
+            </if>
+            <if test="req.storeEmployeeName != null and req.storeEmployeeName != '' ">
+                and b.name LIKE concat(#{req.storeEmployeeName}, '%')
+            </if>
+            <if test="req.storeEmployeePhone != null and req.storeEmployeePhone != '' ">
+                and b.mobile_number LIKE concat(#{req.storeEmployeePhone}, '%')
+            </if>
+            <if test="req.bdName != null and req.bdName != '' ">
+                and c.name LIKE concat(#{req.bdName}, '%')
+            </if>
+            <if test="req.areaName != null and req.areaName != '' ">
+                and d.name LIKE concat(#{req.areaName}, '%')
+            </if>
+            <if test="req.imeiNo != null and req.imeiNo != '' ">
+                and a.imei_no = #{req.imeiNo}
+            </if>
+            <if test="req.oaid != null and req.oaid != '' ">
+                and a.oaid = #{req.oaid}
+            </if>
+            <if test="req.exchangePhoneNo != null and req.exchangePhoneNo != '' ">
+                and a.exchange_phone_no = #{req.exchangePhoneNo}
+            </if>
+            <if test="req.type != null">
+                and a.type = #{req.type}
+            </if>
+            <if test="req.source != null">
+                and a.source = #{req.source}
+            </if>
+            <if test="req.status != null">
+                and a.status = #{req.status}
+            </if>
+            <if test="req.specialStatus != null">
+                and a.status in
+                <foreach item = "status" collection="req.specialStatus" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            <if test="req.id != null">
+                and a.id = #{req.id}
+            </if>
+            <if test="req.customPhone != null and req.customPhone != ''">
+                and a.custom_phone = #{req.customPhone}
+            </if>
+            <if test="req.bdId != null">
+                and a.bd_id = #{req.bdId}
+            </if>
+            <if test="req.areaId != null">
+                and a.area_id = #{req.areaId}
+            </if>
+            <if test="req.agentId != null">
+                and a.agent_id = #{req.agentId}
+            </if>
+            <if test="req.startTime != null">and a.create_time<![CDATA[>= ]]>#{req.startTime}</if>
+            <if test="req.endTime != null">and a.create_time<![CDATA[<= ]]>#{req.endTime}</if>
+            <if test="req.trialStartTime != null">and a.trial_time<![CDATA[>= ]]>#{req.trialStartTime}</if>
+            <if test="req.trialEndTime != null">and a.trial_time<![CDATA[<= ]]>#{req.trialEndTime}</if>
+            <if test="req.cmpIds != null and req.cmpIds.size > 0">
+                and a.store_company_id in
+                <foreach item = "id" collection="req.cmpIds" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="req.platCheck != null">
+                and a.plat_check = #{req.platCheck}
+            </if>
+            <if test="req.illegal != null">
+                and a.illegal = #{req.illegal}
+            </if>
+        </where>
+        order by a.create_time desc
+    </select>
+
+    <select id="orderSummary" resultType="com.zxtx.hummer.exchange.vo.ExchangeOrderSummaryVO">
+        SELECT
+        count(1) as totalNum,
+        count(if(a.type='3',true,null)) as exchangeNum,
+        count(if(a.type='4',true,null)) as onekeyNum,
+        count(if(a.type='5',true,null)) as lvzhouNum,
+        count(if(a.type='6',true,null)) as pgdouyinNum
+        FROM
+        mb_exchange_order a
+        left join employee b on a.store_employee_id=b.id
+        left join employee c on a.bd_id = c.id
+        LEFT JOIN employee d on a.area_id = d.id
+        LEFT JOIN employee e on a.agent_id = e.id
+        LEFT JOIN company f on a.store_company_id = f.id
+        <where>
+            a.bd_id is not null
+            <if test="req.agentName != null and req.agentName != '' ">
+                and e.name LIKE concat(#{req.agentName}, '%')
+            </if>
+            <if test="req.companyName != null and req.companyName != '' ">
+                and f.name LIKE concat(#{req.companyName}, '%')
+            </if>
+            <if test="req.companyMobile != null and req.companyMobile != '' ">
+                and f.contact_mobile = #{req.companyMobile}
+            </if>
+            <if test="req.storeEmployeeName != null and req.storeEmployeeName != '' ">
+                and b.name LIKE concat(#{req.storeEmployeeName}, '%')
+            </if>
+            <if test="req.storeEmployeePhone != null and req.storeEmployeePhone != '' ">
+                and b.mobile_number LIKE concat(#{req.storeEmployeePhone}, '%')
+            </if>
+            <if test="req.bdName != null and req.bdName != '' ">
+                and c.name LIKE concat(#{req.bdName}, '%')
+            </if>
+            <if test="req.areaName != null and req.areaName != '' ">
+                and d.name LIKE concat(#{req.areaName}, '%')
+            </if>
+            <if test="req.imeiNo != null and req.imeiNo != '' ">
+                and a.imei_no = #{req.imeiNo}
+            </if>
+            <if test="req.exchangePhoneNo != null and req.exchangePhoneNo != '' ">
+                and a.exchange_phone_no = #{req.exchangePhoneNo}
+            </if>
+            <if test="req.type != null">
+                and a.type = #{req.type}
+            </if>
+            <if test="req.source != null">
+                and a.source = #{req.source}
+            </if>
+            <if test="req.status != null">
+                and a.status = #{req.status}
+            </if>
+            <if test="req.id != null">
+                and a.id = #{req.id}
+            </if>
+            <if test="req.bdId != null">
+                and a.bd_id = #{req.bdId}
+            </if>
+            <if test="req.areaId != null">
+                and a.area_id = #{req.areaId}
+            </if>
+            <if test="req.agentId != null">
+                and a.agent_id = #{req.agentId}
+            </if>
+            <if test="req.customPhone != null and req.customPhone != ''">
+                and a.custom_phone = #{req.customPhone}
+            </if>
+            <if test="req.startTime != null">and a.create_time<![CDATA[>= ]]>#{req.startTime}</if>
+            <if test="req.endTime != null">and a.create_time<![CDATA[<= ]]>#{req.endTime}</if>
+            <if test="req.trialStartTime != null">and a.trial_time<![CDATA[>= ]]>#{req.trialStartTime}</if>
+            <if test="req.trialEndTime != null">and a.trial_time<![CDATA[<= ]]>#{req.trialEndTime}</if>
+            <if test="req.cmpIds != null and req.cmpIds.size > 0">
+                and a.store_company_id in
+                <foreach item = "id" collection="req.cmpIds" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="req.platCheck != null">
+                and a.plat_check = #{req.platCheck}
+            </if>
+            <if test="req.illegal != null">
+                and a.illegal = #{req.illegal}
+            </if>
+        </where>
+        order by a.create_time desc
+    </select>
+
+    <select id="statAllGroupByEmployee" resultType="com.zxtx.hummer.mobileStat.domain.CompanyDataDailyBase">
+        SELECT store_employee_id as employeeId,
+               count(1)          as exchangeNum
+        FROM mb_exchange_order
+        WHERE
+        trial_time between #{beginTime} and #{endTime}
+        GROUP BY store_employee_id
+    </select>
+
+    <select id="statPassGroupByEmployee" resultType="com.zxtx.hummer.mobileStat.domain.CompanyDataDailyBase">
+        SELECT store_employee_id as employeeId,
+               count(1)          as exchangePassNum
+        FROM mb_exchange_order
+        WHERE
+            status = 2
+            and trial_time between #{beginTime} and #{endTime}
+        GROUP BY store_employee_id
+    </select>
+
+</mapper>

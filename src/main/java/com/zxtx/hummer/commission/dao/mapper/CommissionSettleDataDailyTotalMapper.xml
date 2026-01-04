@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.commission.dao.mapper.CommissionSettleDataDailyTotalMapper">
+
+    <select id="commissionStatGroupByEmployee" resultType="com.zxtx.hummer.mobileStat.domain.CompanyDataDailyBase">
+        SELECT employee_id           as employeeId,
+               ifnull(sum(value), 0) as commissionAmount
+        FROM commission_settle_data_daily_total
+        WHERE day between #{beginTime}
+          and #{endTime}
+        group by employee_id
+    </select>
+
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.insurance.dao.mapper.DiInsuranceMapper">
+
+    <select id="selectByParam" resultType="com.zxtx.hummer.insurance.vo.DiInsuranceVO">
+        SELECT
+        a.id,
+        a.name,
+        a.description,
+        a.type_id,
+        a.package_id,
+        b.name as typeName,
+        c.name as packageName,
+        a.period as period,
+        a.status,
+        a.create_time,
+        a.update_time
+        FROM di_insurance a
+        left join di_type b on a.type_id = b.id
+        left join di_package c on a.package_id = c.id
+        <where>
+            1=1
+            <if test="name != null and name != '' ">
+                and a.name LIKE concat(#{name}, '%')
+            </if>
+            <if test="typeId != null">
+                and a.type_id = #{typeId}
+            </if>
+            <if test="packageId != null">
+                and a.package_id = #{packageId}
+            </if>
+            <if test="status != null">
+                and a.status = #{status}
+            </if>
+            <if test="insuranceIds !=null and insuranceIds.size > 0">
+                and a.id in
+                <foreach collection="insuranceIds" index="index" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        order by a.status asc, a.type_id desc, a.create_time desc
+    </select>
+
+</mapper>

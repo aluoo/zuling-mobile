@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="PATTERN" value="nvwa %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{18} - %msg%n"/>
+
+    <property name="FILE-PATH" value="/data/logs"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="APPLICATION-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE-PATH}/nvwa/application/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${FILE-PATH}/nvwa/application/application.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>100</MaxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <appender name="APPLICATION-FILE-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE-PATH}/nvwa/application/log_time.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${FILE-PATH}/nvwa/application/log_time.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>100</MaxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <springProfile name="local">
+        <!--        <logger name="com.smotech" level="DEBUG" additivity="false">-->
+        <!--            <appender-ref ref="APPLICATION-FILE"/>-->
+        <!--            <appender-ref ref="CONSOLE"/>-->
+        <!--        </logger>-->
+        <!--        <root level="INFO">-->
+        <!--            <appender-ref ref="CONSOLE"/>-->
+        <!--        </root>-->
+        <logger name="com.smotech" level="DEBUG" additivity="false">
+            <appender-ref ref="APPLICATION-FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <logger name="com.zxtx.hummer" level="DEBUG" additivity="false">
+            <appender-ref ref="APPLICATION-FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <logger name="com.zxtx.hummer.qlSec.aspec.QlExecTimeAspec" additivity="false">
+            <appender-ref ref="APPLICATION-FILE-LOG"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <root level="INFO">
+            <appender-ref ref="APPLICATION-FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="develop,test,pre">
+        <logger name="com.smotech" level="DEBUG" additivity="false">
+            <appender-ref ref="APPLICATION-FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <logger name="com.zxtx.hummer" level="DEBUG" additivity="false">
+            <appender-ref ref="APPLICATION-FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <logger name="com.zxtx.hummer.qlSec.aspec.QlExecTimeAspec" additivity="false">
+            <appender-ref ref="APPLICATION-FILE-LOG"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <root level="INFO">
+            <appender-ref ref="APPLICATION-FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="production,jh">
+        <logger name="com.smotech" level="DEBUG" additivity="false">
+            <appender-ref ref="APPLICATION-FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <logger name="com.zxtx.hummer" level="DEBUG" additivity="false">
+            <appender-ref ref="APPLICATION-FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <logger name="com.zxtx.hummer.qlSec.aspec.QlExecTimeAspec" additivity="false">
+            <appender-ref ref="APPLICATION-FILE-LOG"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <root level="INFO">
+            <appender-ref ref="APPLICATION-FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+</configuration>

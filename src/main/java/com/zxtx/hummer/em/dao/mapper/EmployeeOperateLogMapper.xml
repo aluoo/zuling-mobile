@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.em.dao.mapper.EmployeeOperateLogMapper">
+
+    <select id="selectPage" resultType="com.zxtx.hummer.em.vo.OperateLogVo">
+        select
+        *
+        from employee_operate_log
+        <where>
+            1=1
+            <if test="mobileNumber != null and mobileNumber != ''">and mobile_number like
+                CONCAT(#{mobileNumber},'%')
+            </if>
+            <if test="employeeName != null and employeeName != ''">and employee_name like
+                CONCAT(#{employeeName},'%')
+            </if>
+            <if test="companyName != null and companyName != ''">and company_name like
+                CONCAT(#{companyName},'%')
+            </if>
+            <if test="bdName != null and bdName != ''">and bd_name like
+                CONCAT(#{bdName},'%')
+            </if>
+            <if test="reason != null">and reason = #{reason}</if>
+            <if test="type != null">and type = #{type}</if>
+            <if test="startTime != null">and create_time<![CDATA[>= ]]>#{startTime}</if>
+            <if test="endTime != null">and create_time<![CDATA[<= ]]>#{endTime}</if>
+        </where>
+        ORDER BY create_time desc
+    </select>
+</mapper>

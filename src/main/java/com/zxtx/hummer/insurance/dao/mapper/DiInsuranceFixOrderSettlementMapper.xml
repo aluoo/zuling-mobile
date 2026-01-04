@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.insurance.dao.mapper.DiInsuranceFixOrderSettlementMapper">
+    <select id="listSettlement" resultType="com.zxtx.hummer.insurance.domain.dto.DiInsuranceFixOrderSettlementDTO">
+        SELECT s.*,
+               sto.id as serviceType, sto.`name` as serviceTypeStr, clo.id as claimItem, clo.`name` as claimItemStr,
+               o.insurance_name, o.insurance_type, o.insurance_period,
+               f.store_company_id, c.`name` as storeCompanyName,
+               f.create_by as fixOrderCreateBy, bd.`name` as bdName, area.`name` as areaName
+        FROM `di_insurance_fix_order_settlement` s
+                 left join di_insurance_fix_order f on f.id = s.fix_order_id
+                 left join di_insurance_order o on o.id = f.order_id
+                 left join di_option sto on sto.id = f.service_type
+                 left join di_option clo on clo.id = f.claim_item
+                 left join company c on c.id = f.store_company_id
+                 left join employee bd on bd.id = s.bd_id
+                 left join employee area on area.id = s.area_id
+        <where>
+            and s.deleted = 0
+            <if test="req.id != null">
+                and s.id = #{req.id}
+            </if>
+            <if test="req.fixOrderId != null">
+                and s.fix_order_id = #{req.fixOrderId}
+            </if>
+            <if test="req.applyNo != null and req.applyNo != ''">
+                and s.apply_no = #{req.applyNo}
+            </if>
+            <if test="req.ownerName != null and req.ownerName != ''">
+                and s.owner_name = #{req.ownerName}
+            </if>
+            <if test="req.accountNo != null and req.accountNo != ''">
+                and s.account_no = #{req.accountNo}
+            </if>
+            <if test="req.status != null">
+                and s.status = #{req.status}
+            </if>
+            <if test="req.createTimeStart != null">
+                and s.create_time <![CDATA[>= ]]> #{req.createTimeStart}
+            </if>
+            <if test="req.createTimeEnd != null">
+                and s.create_time <![CDATA[<= ]]> #{req.createTimeEnd}
+            </if>
+            <if test="req.storeCompanyName != null and req.storeCompanyName != ''">
+                and c.name = #{req.storeCompanyName}
+            </if>
+        </where>
+        order by s.create_time desc, s.pay_time desc
+    </select>
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.commission.dao.mapper.CommissionSettleMapper">
+
+
+    <select id="countBalanceGroupByEmployee" resultType="com.zxtx.hummer.commission.domain.CommissionSettle">
+        select employee_id,
+        commission_type,
+        gain_type,
+        ifnull(sum(settle_balance), 0) as settle_balance
+        from commission_settle
+        <where>
+            and commission_type = #{bizType}
+            and gain_type = #{gainType}
+            and settle_status = 2
+            and settle_time between #{beginTime} and #{endTime}
+            <if test="employeeId != null">
+                and employee_id = #{employeeId}
+            </if>
+        </where>
+        group by employee_id
+    </select>
+
+    <select id="getBySelfData"
+            resultType="com.zxtx.hummer.commission.dto.CommissionSettleDataDetailInfoDTO">
+        SELECT
+        cs.id,
+        cs.employee_id,
+        cs.commission_type,
+        cs.gain_type,
+        cs.correlation_id,
+        cs.settle_balance,
+        cs.settle_time,
+        cs.remark
+        FROM
+        commission_settle cs
+        <where>
+            and cs.commission_type = #{bizType}
+            and cs.gain_type = #{gainType}
+            AND cs.settle_status = 2
+            AND cs.settle_time BETWEEN #{beginTime} and #{endTime}
+            <if test="employeeIds != null and employeeIds.size > 0">
+                AND cs.employee_id in
+                <foreach collection="employeeIds" index="index" item="empId" open="(" separator="," close=")">
+                    #{empId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBySearch" resultType="com.zxtx.hummer.commission.dto.CommissionSettleDTO">
+        SELECT
+        b.name as employeeName,
+        b.mobile_number as mobileNumber,
+        b.company_type as companyType,
+        b.dept_type as deptType,
+        b.type as employeeType,
+        b.level as employeeLevel,
+        a.id,
+        a.settle_balance,
+        a.settle_status,
+        a.gain_time,
+        a.remark,
+        a.correlation_id,
+        a.gain_type,
+        a.commission_package as commissionType,
+        a.employee_id
+        FROM
+        commission_settle a
+        LEFT JOIN employee b on a.employee_id=b.id
+        <where>
+            <if test="req.startTime != null">and a.create_time<![CDATA[>= ]]>#{req.startTime}</if>
+            <if test="req.endTime != null">and a.create_time<![CDATA[<= ]]>#{req.endTime}</if>
+            <if test="req.mobile != null and req.mobile != '' ">
+                and b.mobile_number = #{req.mobile}
+            </if>
+            <if test="req.orderId != null and req.orderId != '' ">
+                and a.correlation_id = #{req.orderId}
+            </if>
+            <if test="req.remark != null and req.remark != '' ">
+                and a.remark = #{req.remark}
+            </if>
+            <if test="req.settleStatus != null">
+                and a.settle_status = #{req.settleStatus}
+            </if>
+            <if test="req.commissionType != null">
+                and a.commission_package = #{req.commissionType}
+            </if>
+            <if test="req.ancestors != null">
+                AND (a.ancestors = #{req.ancestors} OR a.ancestors LIKE concat(#{req.ancestors}, '%'))
+            </if>
+        </where>
+        order by a.create_time desc, a.level asc
+    </select>
+
+    <select id="sumByParam" resultType="com.zxtx.hummer.commission.dto.CommissionSettleCheckSumVO">
+        SELECT
+        SUM(IF(a.commission_type = 4 , a.settle_balance, 0)) insuranceTotal,
+        SUM(IF(a.commission_type = 1 , a.settle_balance, 0)) mobileTotal,
+        SUM(IF(a.commission_type = 2 , a.settle_balance, 0)) appTotal
+        from commission_settle a
+        LEFT JOIN employee b on a.employee_id=b.id
+        <where>
+            <if test="req.startTime != null">and a.settle_time<![CDATA[>= ]]>#{req.startTime}</if>
+            <if test="req.endTime != null">and a.settle_time<![CDATA[<= ]]>#{req.endTime}</if>
+            <if test="req.commissionType != null">
+                and a.commission_package = #{req.commissionType}
+            </if>
+            <if test="req.orderId != null and req.orderId != ''">
+                and a.correlation_id LIKE concat(#{req.orderId}, '%')
+            </if>
+            <if test="req.mobile != null and req.mobile != ''">
+                and b.mobile_number = #{req.mobile}
+            </if>
+            <if test="req.ancestors != null">
+                AND (a.ancestors = #{req.ancestors} OR a.ancestors LIKE concat(#{req.ancestors}, '%'))
+            </if>
+        </where>
+        order by a.settle_time desc
+    </select>
+
+</mapper>

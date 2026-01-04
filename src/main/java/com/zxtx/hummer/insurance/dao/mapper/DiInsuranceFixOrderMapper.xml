@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxtx.hummer.insurance.dao.mapper.DiInsuranceFixOrderMapper">
+
+    <select id="selectByParam" resultType="com.zxtx.hummer.insurance.vo.DiInsuranceFixOrderVO">
+        SELECT
+        a.id,
+        a.order_id,
+        b.product_name,
+        b.product_spec,
+        b.insurance_name,
+        b.insurance_period,
+        b.custom_name,
+        b.custom_phone,
+        b.imei_no,
+        b.price,
+        b.insurance_no,
+        a.status,
+        a.create_time,
+        a.update_time
+        FROM di_insurance_fix_order a
+        left join di_insurance_order b on a.order_id = b.id
+        <where>
+            1=1
+            <if test="customPhone != null and customPhone != '' ">
+                and b.custom_phone LIKE concat(#{customPhone}, '%')
+            </if>
+            <if test="fixId != null">
+                and a.id = #{fixId}
+            </if>
+            <if test="orderId != null">
+                and a.order_id = #{orderId}
+            </if>
+            <if test="status != null">
+                and a.status = #{status}
+            </if>
+        </where>
+        order by a.create_time desc
+    </select>
+
+    <select id="listFixOrderInfo" resultType="com.zxtx.hummer.insurance.domain.dto.DiFixOrderInfoDTO">
+        select f.*,
+               o.store_employee_id as orderStoreEmployeeId,
+               o.store_company_id as orderStoreCompanyId,
+               o.insurance_id as orderInsuranceId,
+               o.product_sku_id as orderProductSkuId,
+               o.product_name as orderProductName,
+               o.product_spec as orderProductSpec,
+               o.product_sku_purchase_invoice_price as orderProductSkuPurchaseInvoicePrice,
+               o.product_sku_purchase_invoice_time as orderProductSkuPurchaseInvoiceTime,
+               o.insurance_period as orderInsurancePeriod,
+               o.insurance_name as orderInsuranceName,
+               o.insurance_type as orderInsuranceType,
+               o.imei_no as orderImeiNo,
+               o.insurance_no as orderInsuranceNo,
+               o.custom_name as orderCustomName,
+               o.custom_phone as orderCustomPhone
+        from di_insurance_fix_order f
+        left join di_insurance_order o on f.order_id = o.id
+        <where>
+            <if test="req.customPhone != null and req.customPhone != '' ">
+                and o.custom_phone LIKE concat(#{req.customPhone}, '%')
+            </if>
+            <if test="req.customName != null and req.customName != '' ">
+                and o.custom_name LIKE concat(#{req.customName}, '%')
+            </if>
+            <if test="req.insuranceType != null and req.insuranceType != '' ">
+                and o.insurance_type LIKE concat(#{req.insuranceType}, '%')
+            </if>
+            <if test="req.fixCity != null and req.fixCity != '' ">
+                and f.fix_city LIKE concat(#{req.fixCity}, '%')
+            </if>
+            <if test="req.imeiNo != null and req.imeiNo != ''">
+                and o.imei_no = #{req.imeiNo}
+            </if>
+            <if test="req.fixId != null">
+                and f.id = #{req.fixId}
+            </if>
+            <if test="req.orderId != null">
+                and f.order_id = #{req.orderId}
+            </if>
+            <if test="req.status != null">
+                and f.status = #{req.status}
+            </if>
+            <if test="req.serviceType != null">
+                and f.service_type = #{req.serviceType}
+            </if>
+            <if test="req.claimItem != null">
+                and f.claim_item = #{req.claimItem}
+            </if>
+            <if test="req.createTimeStart != null and req.createTimeStart != ''">and f.create_time<![CDATA[>= ]]>#{req.createTimeStart}</if>
+            <if test="req.createTimeEnd != null and req.createTimeEnd != ''">and f.create_time<![CDATA[<= ]]>#{req.createTimeEnd}</if>
+        </where>
+        order by f.create_time desc
+    </select>
+
+    <select id="getFixOrderCount" resultType="com.zxtx.hummer.insurance.domain.dto.DiFixOrderCountDTO">
+        select order_id, count(order_id) as count
+        from di_insurance_fix_order
+        <where>
+            and order_id in
+            <foreach collection="req.orderIds" item="orderId" index="index" separator="," open="(" close=")">
+                #{orderId}
+            </foreach>
+        </where>
+        group by order_id
+    </select>
+
+</mapper>
