@@ -104,6 +104,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");
         filterChainDefinitionMap.put("/webjars/**", "anon");
         filterChainDefinitionMap.put("/", "anon");
+        //开发绕过权限
+        filterChainDefinitionMap.put("/api/product-type/**", "anon");
+        filterChainDefinitionMap.put("/api/product-type-app/**", "anon");
         //API开头的标识用JWTTOKEN请求的进入拦截器JWTAuthcFilter处理
         filterChainDefinitionMap.put("/api/filterError", "anon");
         filterChainDefinitionMap.put("/api/**", "jwtAuth");

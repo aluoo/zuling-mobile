@@ -11,8 +11,10 @@ public class SggCodeGenerator {
 
     public static void main(String[] args) {
         // 3、数据源配置
-        DataSourceConfig dsc = new DataSourceConfig.Builder("jdbc:mysql://47.98.124.98:3306/mobile?serverTimezone=GMT%2B8", "root", "af4fc87beb5d")
+        DataSourceConfig dsc = new DataSourceConfig.Builder("jdbc:mysql://47.98.124.98:3306/mobile?serverTimezone=GMT%2B8&useSSL=false", "root", "af4fc87beb5d")
                 .build();
+
+
         // 1、创建代码生成器
         AutoGenerator mpg = new AutoGenerator(dsc);
         // 2、全局配置
@@ -27,7 +29,7 @@ public class SggCodeGenerator {
 
         // 4、包配置
         PackageConfig pc = new PackageConfig.Builder()
-                .parent("com.zxtx.hummer.insurance")
+                .parent("com.zxtx.hummer.products")
                 .controller("controller")
                 .entity("domain")
                 .service("service")
@@ -38,7 +40,7 @@ public class SggCodeGenerator {
 
         // 5、策略配置
         StrategyConfig strategy = new StrategyConfig.Builder()
-                .addInclude("di_product_insurance_price")
+                .addInclude("zj_product_type_app")
                 .entityBuilder()
                 .enableFileOverride()
                 .idType(IdType.ASSIGN_ID)
